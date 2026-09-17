@@ -1,5 +1,6 @@
-import mariadb  # type: ignore[import-untyped]
 import os
+
+import mariadb  # type: ignore[import-untyped]
 from dotenv import load_dotenv
 
 load_dotenv()
