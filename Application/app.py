@@ -1,5 +1,5 @@
 import argparse
-from datetime import date
+from datetime import UTC, datetime
 
 from Application.database import get_connection
 
@@ -10,10 +10,10 @@ def add_user(name, age, city, email):
 
     cursor.execute(
         """
-        INSERT INTO users (name, age, city, email, created_at)
-        VALUES (?, ?, ?, ?, ?)
-        """,
-        (name, age, city, email, date.today()),
+    INSERT INTO users (name, age, city, email, created_at)
+    VALUES (?, ?, ?, ?, ?)
+    """,
+        (name, age, city, email, datetime.now(UTC).date()),
     )
 
     conn.commit()
