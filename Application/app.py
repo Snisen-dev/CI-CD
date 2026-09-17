@@ -59,7 +59,7 @@ def list_users():
                 f"{user[2]:<5} "
                 f"{user[3]:<20} "
                 f"{user[4]:<30} "
-                f"{str(user[5]):<12}"
+                f"{user[5]!s:<12}"
             )
 
     cursor.close()
