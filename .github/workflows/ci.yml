@@ -19,35 +19,29 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Show runner info
-        shell: pwsh
+      - name: Check Python
+        shell: powershell
         run: |
-          Write-Host "Runner: $env:RUNNER_NAME"
-          Write-Host "Working directory:"
-          Get-Location
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+          python --version
+          where.exe python
 
       - name: Create virtual environment
-        shell: pwsh
+        shell: powershell
         run: |
           python -m venv .venv
 
       - name: Install dependencies
-        shell: pwsh
+        shell: powershell
         run: |
           .\.venv\Scripts\python.exe -m pip install --upgrade pip
           .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 
       - name: Run Ruff
-        shell: pwsh
+        shell: powershell
         run: |
           .\.venv\Scripts\ruff.exe check .
 
       - name: Run tests
-        shell: pwsh
+        shell: powershell
         run: |
           .\.venv\Scripts\pytest.exe -v
