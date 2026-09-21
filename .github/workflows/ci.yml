@@ -1,48 +1,37 @@
-name: CI Pipeline
+name: CI
 
 on:
   push:
     branches:
       - main
       - test
-  pull_request:
 
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+      - test
 
 jobs:
   test:
-    runs-on: [self-hosted, Windows, X64]
+    runs-on: self-hosted
 
-    env:
-      DB_NAME: test_ci
-      
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Check Python
-        shell: powershell
-        run: |
-          python --version
-          where.exe python
+      - name: Build Docker image
+        run: docker build -t ci-cd-app .
 
-      - name: Create virtual environment
-        shell: powershell
-        run: |
-          python -m venv .venv
+      - name: Run Ruff inside Docker
+        run: docker run --rm ci-cd-app ruff check .
 
-      - name: Install dependencies
-        shell: powershell
-        run: |
-          .\.venv\Scripts\python.exe -m pip install --upgrade pip
-          .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-
-      - name: Run Ruff
-        shell: powershell
-        run: |
-          .\.venv\Scripts\ruff.exe check .
-
-      - name: Run tests
-        shell: powershell
-        run: |
-          .\.venv\Scripts\pytest.exe -v
+      - name: Run Pytest inside Docker
+        run: >
+          docker run --rm
+          -e DB_HOST=host.docker.internal
+          -e DB_PORT=3306
+          -e DB_USER=root
+          -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+          -e DB_NAME=test_ci
+          ci-cd-app
+          pytest -v
