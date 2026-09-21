@@ -1,0 +1,48 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - test
+  pull_request:
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: [self-hosted, Windows, X64]
+
+    env:
+      DB_NAME: test_ci
+      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check Python
+        shell: powershell
+        run: |
+          python --version
+          where.exe python
+
+      - name: Create virtual environment
+        shell: powershell
+        run: |
+          python -m venv .venv
+
+      - name: Install dependencies
+        shell: powershell
+        run: |
+          .\.venv\Scripts\python.exe -m pip install --upgrade pip
+          .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+      - name: Run Ruff
+        shell: powershell
+        run: |
+          .\.venv\Scripts\ruff.exe check .
+
+      - name: Run tests
+        shell: powershell
+        run: |
+          .\.venv\Scripts\pytest.exe -v
