@@ -22,16 +22,12 @@ jobs:
       - name: Build Docker image
         run: docker build -t ci-cd-app .
 
-      - name: Run Ruff inside Docker
+      - name: Run Ruff
         run: docker run --rm ci-cd-app ruff check .
 
-      - name: Run Pytest inside Docker
-        run: >
-          docker run --rm
-          -e DB_HOST=host.docker.internal
-          -e DB_PORT=3306
-          -e DB_USER=root
-          -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
-          -e DB_NAME=test_ci
-          ci-cd-app
-          pytest -v
+      - name: Run tests with Docker Compose
+        run: docker compose up --build --abort-on-container-exit --exit-code-from app
+
+      - name: Clean up Docker containers
+        if: always()
+        run: docker compose down -v
