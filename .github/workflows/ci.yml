@@ -30,4 +30,4 @@ jobs:
 
       - name: Clean up Docker containers
         if: always()
-        run: docker compose down -v
+        run: docker compose down --rmi all -v
