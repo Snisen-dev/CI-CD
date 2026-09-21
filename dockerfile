@@ -14,6 +14,8 @@ RUN pip install --no-cache-dir pytest ruff
 
 COPY . .
 
+RUN chmod -x Application/*.py tests/*.py
+
 ENV PYTHONPATH=/app
 
 CMD ["pytest", "-v"]
